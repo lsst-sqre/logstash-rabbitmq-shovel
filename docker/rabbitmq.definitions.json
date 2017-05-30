@@ -1,0 +1,84 @@
+{
+    "bindings": [
+        {
+            "arguments": {},
+            "destination": "panopticon-logstash",
+            "destination_type": "queue",
+            "routing_key": "logstash",
+            "source": "panopticon-logstash-exchange",
+            "vhost": "/"
+        }
+    ],
+    "exchanges": [
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "internal": false,
+            "name": "panopticon-logstash-exchange",
+            "type": "direct",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "internal": false,
+            "name": "panopticon-logstash-shovel",
+            "type": "direct",
+            "vhost": "/"
+        }
+    ],
+    "global_parameters": [
+        {
+            "name": "cluster_name",
+            "value": "rabbit@rabbit-aws"
+        }
+    ],
+    "parameters": [
+        {
+            "component": "shovel",
+            "name": "panopticon-logstash-shovel",
+            "value": {
+                "dest-exchange": "logstash-exchange",
+                "dest-uri": "amqp://pan:{{RABBITMQ_PAN_PASSWORD}}@rabbit-0.lsst.codes/logstash",
+                "src-queue": "panopticon-logstash",
+                "src-uri": "amqp://"
+            },
+            "vhost": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "configure": ".*",
+            "read": ".*",
+            "user": "guest",
+            "vhost": "/",
+            "write": ".*"
+        }
+    ],
+    "policies": [],
+    "queues": [
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "name": "panopticon-logstash",
+            "vhost": "/"
+        }
+    ],
+    "rabbit_version": "3.6.9",
+    "users": [
+        {
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "name": "guest",
+            "password_hash": "XB2ERLGmK89MaPCjMyf8P6WurUgIaYOo6rGKcGvOyZYs1bPg",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ]
+}
