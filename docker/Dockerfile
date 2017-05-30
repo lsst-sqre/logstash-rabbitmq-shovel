@@ -20,24 +20,23 @@ USER       root
 WORKDIR    /opt/
 
 # Install EPEL, Java 1.8 and supervisord
-RUN        yum install -y epel-release java-1.8.0-openjdk supervisord which
-ENV        JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
-RUN        export JAVACMD=`which java`
+RUN        yum install -y epel-release java-1.8.0-openjdk supervisord which \
+            socat logrotate
 
 RUN        rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 COPY       logstash.repo /etc/yum.repos.d/logstash.repo
-RUN        export JAVA_HOME=${JAVA_HOME};yum install -y logstash
+RUN        yum install -y logstash
 COPY       029-output-rabbitmq.conf /etc/logstash/conf.d/029-output-rabbitmq.conf
 COPY       010-input-beats.conf /etc/logstash/conf.d/010-input-beats.conf
 
-# RUN        yum install -y socat logrotate
 COPY       erlang.install.rpm.sh /opt/erlang.install.rpm.sh
 COPY       rabbitmq.install.rpm.sh /opt/rabbitmq.install.rpm.sh
 RUN        /usr/bin/bash /opt/erlang.install.rpm.sh
 RUN        /usr/bin/bash /opt/rabbitmq.install.rpm.sh
 RUN        yum install -y erlang rabbitmq-server
 RUN        rabbitmq-plugins enable rabbitmq_shovel rabbitmq_management --offline
-COPY       rabbitmq.config /etc/rabbitmq/rabbitmq.config
+COPY       rabbitmq.definitions.json enabled_plugins rabbitmq.config \
+            /etc/rabbitmq/
 COPY       rabbitmq.definitions.json /etc/rabbitmq/rabbitmq.definitions.json
 
 COPY       substitute_config.sh /substitute_config.sh
