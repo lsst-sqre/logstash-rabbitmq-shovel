@@ -37,6 +37,7 @@ RUN        /usr/bin/bash /opt/rabbitmq.install.rpm.sh
 RUN        yum install -y erlang rabbitmq-server
 RUN        rabbitmq-plugins enable rabbitmq_shovel rabbitmq_management --offline
 ADD        rabbitmq.config /etc/rabbitmq/rabbitmq.config
+ADD        enabled_plugins /etc/rabbitmq/enabled_plugins
 ADD        rabbitmq.definitions.json /etc/rabbitmq/rabbitmq.definitions.json
 
 ADD        entrypoint.sh /entrypoint.sh

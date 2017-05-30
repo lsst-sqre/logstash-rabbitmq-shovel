@@ -18,34 +18,12 @@
             "name": "panopticon-logstash-exchange",
             "type": "direct",
             "vhost": "/"
-        },
-        {
-            "arguments": {},
-            "auto_delete": false,
-            "durable": true,
-            "internal": false,
-            "name": "panopticon-logstash-shovel",
-            "type": "direct",
-            "vhost": "/"
         }
     ],
     "global_parameters": [
         {
             "name": "cluster_name",
             "value": "rabbit@rabbit-aws"
-        }
-    ],
-    "parameters": [
-        {
-            "component": "shovel",
-            "name": "panopticon-logstash-shovel",
-            "value": {
-                "dest-exchange": "logstash-exchange",
-                "dest-uri": "amqp://pan:{{ RABBITMQ_PAN_PASSWORD }}@rabbit-0.lsst.codes/logstash",
-                "src-queue": "panopticon-logstash",
-                "src-uri": "amqp://"
-            },
-            "vhost": "/"
         }
     ],
     "permissions": [
