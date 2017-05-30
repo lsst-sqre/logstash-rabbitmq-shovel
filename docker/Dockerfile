@@ -1,36 +1,35 @@
 FROM       centos:7
 MAINTAINER sqre-admin
-LABEL      description="Logstash and RabbitMQ Shovel"
+LABEL      description="Logstash and RabbitMQ Shovel" \
            name="lsstsqre/logstash-rabbitmq-shovel"
 
 # Logstash environment variables.
 ENV	   LOGSTASH_VERSION "5.4.0"
-ENV        LOGSTASH_TGZ "logstash-${LOGSTASH_VERSION}-linux-x86_64.tar.gz"
-ENV        LOGSTASH_URL "https://artifacts.elastic.co/downloads/logstash/logstash/${LOGSTASH_TGZ}"
-ENV        LOGSTASH_HOME /opt/logstash-${LOGSTASH_VERSION}-linux-x86_64
+ENV        LOGSTASH_SITE "https://artifacts.elastic.co/downloads/logstash/"
+ENV        LOGSTASH_RPM "logstash-${LOGSTASH_VERSION}.rpm"
+ENV        LOGSTASH_URL "${LOGSTASH_SITE}${LOGSTASH_RPM}"
 
 # RabbitMQ environment variables.
 ENV        ERLANG_URL "https://github.com/rabbitmq/erlang-rpm/releases/download/v19.3.4/erlang-19.3.4-1.el7.centos.x86_64.rpm"
 ENV        RABBITMQ_URL "https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.10/rabbitmq-server-3.6.10-1.el7.noarch.rpm"
-ENV        RABBITMQ_HOME /opt/rabbitmq
+
+EXPOSE     5044
 
 USER       root
 WORKDIR    /opt/
 
-RUN        yum install epel
+RUN        yum install -y epel-release
+RUN        yum install -y socat logrotate which java-1.8.0-openjdk
+RUN        yum install -y ${LOGSTASH_URL}
+COPY       029-output-rabbitmq.conf /etc/logstash/conf.d/029-output-rabbitmq.conf
+COPY       010-input-beats.conf /etc/logstash/conf.d/010-input-beats.conf
 
-RUN        yum install java-1.8.0-openjdk
-ENV        JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
-RUN        rpm -i ${LOGSTASH_URL}
-ADD        029-output-rabbitmq.conf /etc/logstash/conf.d/029-output-rabbitmq.conf
-ADD        010-input-beats.conf /etc/logstash/conf.d/010-input-beats.conf
+RUN        yum install -y ${ERLANG_URL}
+RUN        yum install -y ${RABBITMQ_URL}
+COPY       rabbitmq.config /etc/rabbitmq/rabbitmq.config
 
-RUN        yum install socat logrotate
-RUN        rpm -i ${ERLANG_URL}
-RUN        rpm -i ${RABBITMQ_URL}
-ADD        rabbitmq.config /etc/rabbitmq/rabbitmq.config
+COPY       substitute_config.sh /substitute_config.sh
+RUN        chmod +x /substitute_config.sh
 
-ADD        entrypoint.sh /entrypoint.sh
-RUN        chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash","--login"]
