@@ -8,15 +8,22 @@ set_config() {
 	echo "${KEY} must be set" 1>&2
 	exit 1
     fi
-    sed -i "s/{{${KEY}}}/${VALUE}/g" ${FILEBEAT_HOME}/filebeat.yml
+    sed -i "s/{{${KEY}}}/${VALUE}/g" ${RABBITMQ_CONFIG}/rabbitmq.config
 }
 
-if [ -z "${LOGSTASH_HOME}" ]; then
-    echo "LOGSTASH_HOME must be set." 1>&2
+if [ -z "${RABBITMQ_PAN_PASSWORD}" ]; then
+    echo "RABBITMQ_PAN_PASSWORD must be set." 1>&2
     exit 1
 fi
 
-if [ -z "${RABBITMQ_HOME}" ]; then
-    echo "RABBITMQ_HOME must be set." 1>&2
+if [ -z "${RABBITMQ_TARGET_HOST}" ]; then
+    echo "RABBITMQ_TARGET_HOST must be set." 1>&2
     exit 1
 fi
+
+if [ -z "${RABBITMQ_TARGET_VHOST}" ]; then
+    echo "RABBITMQ_TARGET_VHOST must be set." 1>&2
+    exit 1
+fi
+
+/usr/bin/supervisord -c /etc/supervisord.conf
