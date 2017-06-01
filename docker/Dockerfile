@@ -17,8 +17,8 @@ RUN        export JAVACMD=`which java`
 RUN        rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 COPY       logstash.repo /etc/yum.repos.d/logstash.repo
 RUN        export JAVA_HOME=${JAVA_HOME};yum install -y logstash
-COPY       029-output-rabbitmq.conf /etc/logstash/conf.d/029-output-rabbitmq.conf
-COPY       010-input-beats.conf /etc/logstash/conf.d/010-input-beats.conf
+COPY       010-input-beats.conf 029-output-rabbitmq.conf \
+            /etc/logstash/conf.d/010-input-beats.conf
 
 # Install erlang and RabbitMQ
 COPY       erlang.install.rpm.sh /opt/erlang.install.rpm.sh
@@ -28,9 +28,8 @@ RUN        /usr/bin/bash /opt/rabbitmq.install.rpm.sh
 RUN        yum install -y erlang rabbitmq-server
 RUN        rabbitmq-plugins enable rabbitmq_shovel rabbitmq_management --offline
 ENV        RABBITMQ_CONFIG "/etc/rabbitmq"
-COPY       rabbitmq.config $RABBITMQ_CONFIG/rabbitmq.config
-COPY       enabled_plugins $RABBITMQ_CONFIG/enabled_plugins
-COPY       rabbitmq.definitions.json $RABBITMQ_CONFIG/rabbitmq.definitions.json
+COPY       rabbitmq.config enabled_plugins rabbitmq.definitions.json \
+           rabbitmq.shovel.definitions.json $RABBITMQ_CONFIG/rabbitmq.definitions.json
 
 # Copy supervisor configurations.
 ENV        SUPERVISOR_CONFIG "/etc/supervisord.d"
