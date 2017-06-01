@@ -7,7 +7,9 @@ USER       root
 WORKDIR    /opt/
 
 # Install EPEL, Java 1.8 and supervisor
-RUN        yum install -y epel-release java-1.8.0-openjdk supervisor which
+RUN        yum install -y epel-release java-1.8.0-openjdk which
+RUN        yum upgrade -y
+RUN        yum install -y supervisor
 ENV        JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 RUN        export JAVACMD=`which java`
 
@@ -25,13 +27,13 @@ RUN        /usr/bin/bash /opt/erlang.install.rpm.sh
 RUN        /usr/bin/bash /opt/rabbitmq.install.rpm.sh
 RUN        yum install -y erlang rabbitmq-server
 RUN        rabbitmq-plugins enable rabbitmq_shovel rabbitmq_management --offline
-ARG        RABBITMQ_CONFIG /etc/rabbitmq
+ENV        RABBITMQ_CONFIG "/etc/rabbitmq"
 COPY       rabbitmq.config $RABBITMQ_CONFIG/rabbitmq.config
 COPY       enabled_plugins $RABBITMQ_CONFIG/enabled_plugins
 COPY       rabbitmq.definitions.json $RABBITMQ_CONFIG/rabbitmq.definitions.json
 
 # Copy supervisor configurations.
-ARG        SUPERVISOR_CONFIG /etc/supervisord.d
+ENV        SUPERVISOR_CONFIG "/etc/supervisord.d"
 COPY       rabbitmq.ini $SUPERVISOR_CONFIG/rabbitmq.ini
 COPY       logstash.ini $SUPERVISOR_CONFIG/logstash.ini
 
@@ -42,5 +44,7 @@ RUN        chmod +x /substitute_config.sh
 COPY       entrypoint.sh /entrypoint.sh
 RUN        chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
-# ENTRYPOINT ["/bin/bash","--login"]
+EXPOSE     5044
+
+# ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash","--login"]
