@@ -30,5 +30,5 @@ COPY       rabbitmq.ini logstash.ini /etc/supervisord.d/
 COPY       entrypoint.sh substitute_config.sh /
 RUN        chmod +x /entrypoint.sh /substitute_config.sh
 
-#ENTRYPOINT ["/entrypoint.sh"]
-ENTRYPOINT ["/bin/bash", "--login"]
+ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/bin/bash", "--login"]
