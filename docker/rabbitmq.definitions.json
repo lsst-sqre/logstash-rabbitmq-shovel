@@ -20,12 +20,6 @@
             "vhost": "/"
         }
     ],
-    "global_parameters": [
-        {
-            "name": "cluster_name",
-            "value": "rabbit@rabbit-aws"
-        }
-    ],
     "permissions": [
         {
             "configure": ".*",
@@ -45,7 +39,6 @@
             "vhost": "/"
         }
     ],
-    "rabbit_version": "3.6.9",
     "users": [
         {
             "hashing_algorithm": "rabbit_password_hashing_sha256",

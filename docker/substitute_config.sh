@@ -24,7 +24,7 @@ RMQ="/etc/rabbitmq/rabbitmq.config"
 SUP="/etc/supervisord.conf"
 set_config RABBITMQ_PAN_PASSWORD ${RABBITMQ_PAN_PASSWORD} ${RMQ}
 set_config RABBITMQ_TARGET_HOST ${RABBITMQ_TARGET_HOST} ${RMQ}
-set_config RABBITMQ_TARGET_QUEUE ${RABBITMQ_TARGET_VHOST} ${RMQ}
+set_config RABBITMQ_TARGET_VHOST ${RABBITMQ_TARGET_VHOST} ${RMQ}
 SUPERVISORD_PASSWORD=$(dd if=/dev/urandom bs=1 count=16 2>/dev/null | \
 			   base64 -i - | sed -e 's|/|_|g')
 set_config SUPERVISORD_PASSWORD ${SUPERVISORD_PASSWORD} ${SUP}
